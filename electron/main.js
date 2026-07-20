@@ -50,20 +50,8 @@ function createMainWindow() {
 
   loadRoute(mainWindow, '/')
 
-  if (isDev) {
-    mainWindow.webContents.openDevTools()
-  } else {
-    // Disable DevTools shortcuts in production
-    mainWindow.webContents.on('before-input-event', (event, input) => {
-      if (
-        input.key === 'F12' ||
-        (input.control && input.shift && (input.key.toLowerCase() === 'i' || input.key.toLowerCase() === 'j')) ||
-        (input.control && input.key.toLowerCase() === 'u')
-      ) {
-        event.preventDefault()
-      }
-    })
-  }
+  // TEMPORARILY FORCE DEVTOOLS OPEN IN PRODUCTION TO INSPECT THE ERROR
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('close', (e) => {
     if (!app.isQuitting) {
@@ -72,7 +60,6 @@ function createMainWindow() {
     }
   })
 }
-
 function createQuickCapture() {
   if (quickCaptureWindow) {
     quickCaptureWindow.show()
