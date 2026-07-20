@@ -50,20 +50,8 @@ function createMainWindow() {
 
   loadRoute(mainWindow, '/')
 
-  if (isDev) {
-    mainWindow.webContents.openDevTools()
-  } else {
-    // Disable DevTools shortcuts in production
-    mainWindow.webContents.on('before-input-event', (event, input) => {
-      if (
-        input.key === 'F12' ||
-        (input.control && input.shift && (input.key.toLowerCase() === 'i' || input.key.toLowerCase() === 'j')) ||
-        (input.control && input.key.toLowerCase() === 'u')
-      ) {
-        event.preventDefault()
-      }
-    })
-  }
+  // FORCED OPEN: This will open DevTools even in production so you can inspect the error console
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('close', (e) => {
     if (!app.isQuitting) {
@@ -190,8 +178,8 @@ app.whenReady().then(async () => {
   }
 
   const registered = globalShortcut.register('CommandOrControl+Alt+N', () => {
-  createQuickCapture()
-})
+    createQuickCapture()
+  })
   if (!registered) console.error('Quick-capture shortcut registration failed')
 
   mainWindow.on('maximize', () => mainWindow.webContents.send('window:maximized', true))
