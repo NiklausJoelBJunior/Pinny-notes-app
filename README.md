@@ -2,7 +2,7 @@
 
 A local-first desktop notes app built with **Electron, React, and Vite** — write in Markdown, pin any note out into a small always-on-top sticky window, and capture a thought from anywhere on your OS with a single global shortcut.
 
-**Demo:** https://niklausjoelbjunior.github.io/Pinny-notes-app
+**Demo:** https://NiklausJoelBJunior.github.io/Pinny-notes-app
 **Preview:**
 
 ![Pinny preview](./src/assets/Preview.png)
@@ -42,7 +42,7 @@ Pinny is a notes app built around one idea: capturing and revisiting thoughts sh
 ## Getting Started
 
 ```bash
-git clone https://github.com/<your-username>/pinny-notes.git
+git clone https://github.com/NiklausJoelBJunior/pinny-notes.git
 cd pinny-notes
 npm install
 npm run electron:dev
