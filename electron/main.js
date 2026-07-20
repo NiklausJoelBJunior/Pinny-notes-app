@@ -189,9 +189,9 @@ app.whenReady().then(async () => {
     autoUpdater.checkForUpdatesAndNotify()
   }
 
-  const registered = globalShortcut.register('CommandOrControl+Shift+N', () => {
-    createQuickCapture()
-  })
+  const registered = globalShortcut.register('CommandOrControl+Alt+N', () => {
+  createQuickCapture()
+})
   if (!registered) console.error('Quick-capture shortcut registration failed')
 
   mainWindow.on('maximize', () => mainWindow.webContents.send('window:maximized', true))
