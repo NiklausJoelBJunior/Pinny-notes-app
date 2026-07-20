@@ -21,7 +21,7 @@ function loadRoute(win, route) {
   if (isDev) {
     win.loadURL(`http://localhost:5173/#${route}`)
   } else {
-    win.loadFile(path.join(__dirname, '../dist/index.html'), { hash: route })
+    win.loadFile(path.join(app.getAppPath(), 'dist/index.html'), { hash: route })
   }
 }
 
@@ -50,7 +50,7 @@ function createMainWindow() {
 
   loadRoute(mainWindow, '/')
 
-  // FORCED OPEN: This will open DevTools even in production so you can inspect the error console
+  // DevTools open for inspection
   mainWindow.webContents.openDevTools()
 
   mainWindow.on('close', (e) => {
