@@ -1,0 +1,18 @@
+name: Deploy Landing Page to GitHub Pages
+
+on:
+  push:
+  # Triggers when you push changes to the main branch
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs # Deploys the docs folder
