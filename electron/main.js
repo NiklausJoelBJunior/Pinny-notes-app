@@ -3,9 +3,11 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { Low } from 'lowdb'
 import { JSONFile } from 'lowdb/node'
-import { autoUpdater } from 'electron-updater'
+import pkg from 'electron-updater';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDev = process.env.NODE_ENV === 'development'
+const { autoUpdater } = pkg;
 
 let mainWindow
 let quickCaptureWindow
@@ -23,6 +25,13 @@ function loadRoute(win, route) {
   }
 }
 
+function broadcastNotesUpdate() {
+  const allWindows = BrowserWindow.getAllWindows()
+  allWindows.forEach(win => {
+    win.webContents.send('notes:updated')
+  })
+}
+
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
@@ -38,8 +47,23 @@ function createMainWindow() {
       nodeIntegration: false,
     },
   })
+
   loadRoute(mainWindow, '/')
-  if (isDev) mainWindow.webContents.openDevTools()
+
+  if (isDev) {
+    mainWindow.webContents.openDevTools()
+  } else {
+    // Disable DevTools shortcuts in production
+    mainWindow.webContents.on('before-input-event', (event, input) => {
+      if (
+        input.key === 'F12' ||
+        (input.control && input.shift && (input.key.toLowerCase() === 'i' || input.key.toLowerCase() === 'j')) ||
+        (input.control && input.key.toLowerCase() === 'u')
+      ) {
+        event.preventDefault()
+      }
+    })
+  }
 
   mainWindow.on('close', (e) => {
     if (!app.isQuitting) {
@@ -55,12 +79,7 @@ function createQuickCapture() {
     quickCaptureWindow.focus()
     return
   }
-function broadcastNotesUpdate() {
-  const allWindows = BrowserWindow.getAllWindows()
-  allWindows.forEach(win => {
-    win.webContents.send('notes:updated')
-  })
-}
+
   quickCaptureWindow = new BrowserWindow({
     width: 480,
     height: 200,
@@ -75,6 +94,7 @@ function broadcastNotesUpdate() {
       nodeIntegration: false,
     },
   })
+
   loadRoute(quickCaptureWindow, '/quick-capture')
 
   quickCaptureWindow.on('blur', () => quickCaptureWindow?.hide())
@@ -99,12 +119,14 @@ function createStickyWindow(noteId) {
       nodeIntegration: false,
     },
   })
+
   loadRoute(win, `/sticky/${noteId}`)
 
   win.on('closed', () => stickyWindows.delete(noteId))
   stickyWindows.set(noteId, win)
 }
 
+// IPC Handlers
 ipcMain.on('window:minimize', () => mainWindow.minimize())
 ipcMain.on('window:maximize', () => {
   if (mainWindow.isMaximized()) mainWindow.unmaximize()
@@ -121,12 +143,6 @@ ipcMain.on('quickcapture:close', () => quickCaptureWindow?.hide())
 ipcMain.on('pop-out-note', (event, notePayload) => {
   createStickyWindow(notePayload.id)
 })
-function broadcastNotesUpdate() {
-  const allWindows = BrowserWindow.getAllWindows()
-  allWindows.forEach(win => {
-    win.webContents.send('notes:updated')
-  })
-}
 
 ipcMain.handle('db:get-notes', async () => {
   await db.read()
@@ -167,11 +183,12 @@ ipcMain.handle('db:delete-note', async (_event, id) => {
 
 app.whenReady().then(async () => {
   await db.read()
-  
   createMainWindow()
-if (!isDev) {
+
+  if (!isDev) {
     autoUpdater.checkForUpdatesAndNotify()
   }
+
   const registered = globalShortcut.register('CommandOrControl+Shift+N', () => {
     createQuickCapture()
   })
