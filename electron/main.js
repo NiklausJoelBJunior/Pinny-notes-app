@@ -50,8 +50,20 @@ function createMainWindow() {
 
   loadRoute(mainWindow, '/')
 
-  // DevTools open for inspection
-  mainWindow.webContents.openDevTools()
+  if (isDev) {
+    mainWindow.webContents.openDevTools()
+  } else {
+    // Disable DevTools shortcuts in production
+    mainWindow.webContents.on('before-input-event', (event, input) => {
+      if (
+        input.key === 'F12' ||
+        (input.control && input.shift && (input.key.toLowerCase() === 'i' || input.key.toLowerCase() === 'j')) ||
+        (input.control && input.key.toLowerCase() === 'u')
+      ) {
+        event.preventDefault()
+      }
+    })
+  }
 
   mainWindow.on('close', (e) => {
     if (!app.isQuitting) {

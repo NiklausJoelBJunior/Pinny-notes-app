@@ -57,7 +57,8 @@
     "publish": {
       "provider": "github",
       "owner": "NiklausJoelBJunior",
-      "repo": "Pinny-notes-app"
+      "repo": "Pinny-notes-app",
+      "releaseType": "release"
     }
   }
 }
