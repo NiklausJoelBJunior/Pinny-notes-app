@@ -50,8 +50,9 @@ function createMainWindow() {
 
   loadRoute(mainWindow, '/')
 
-  // TEMPORARILY FORCE DEVTOOLS OPEN IN PRODUCTION TO INSPECT THE ERROR
-  mainWindow.webContents.openDevTools()
+  if (isDev) {
+    mainWindow.webContents.openDevTools()
+  }
 
   mainWindow.on('close', (e) => {
     if (!app.isQuitting) {
@@ -60,6 +61,7 @@ function createMainWindow() {
     }
   })
 }
+
 function createQuickCapture() {
   if (quickCaptureWindow) {
     quickCaptureWindow.show()
