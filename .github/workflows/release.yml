@@ -24,6 +24,10 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      # ─── THIS STEP WAS MISSING ───
+      - name: Build React Frontend
+        run: npm run build
+
       - name: Build and Publish App
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
